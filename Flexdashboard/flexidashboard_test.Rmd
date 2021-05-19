@@ -1,0 +1,236 @@
+---
+title: "At a glance"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library("readxl")
+library("dplyr")
+library("plotly")
+require(flexdashboard)
+wd = getwd()
+setwd(wd)
+packages = c("openxlsx", "effsize", "Hmisc", "knitr", "kableExtra", "stargazer", "ggpubr", "pander", "psych", "xtable", "likert", "HH", "data.table", "qwraps2", "readxl" ,"janitor", "pastecs", "summarytools", "expss", "ggplot2","ggpubr","knitr","tinytex", "stringr","stringdist","scales","rmarkdown", "effsize", "chron")
+package.check = lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
+orf <- read_xlsx("ORF Database.xlsx")
+
+##Report per pilot
+
+
+
+
+
+```
+
+```{r Pilots, include=F}
+
+#-------------------------------------------------
+#Test histogram
+temp <- as.numeric(orf[[24]])
+temp <- as.numeric(unlist(temp[!is.na(temp)]))
+#-------------------------------------------------
+
+pilot <- orf  %>%
+  filter(Responsibility == "Pilot") %>%
+  dplyr::select('Name of PIC', Category, Nature)
+
+occs <- unique(pilot$Nature)
+pilots <- unique(pilot$`Name of PIC`)
+
+ bar_summary <- matrix(nrow = length(occs), ncol = 2)
+ for (name in pilots){
+
+ }
+
+
+ var <- pilot$Nature
+
+ for(i in 1:length(occs)){
+
+   var <- ifelse(var == i, occs[i], var)
+
+ }
+
+ var <- factor(var, occs)
+
+
+
+
+```
+
+
+
+# Pilots 
+
+Column {.sidebar data-width=200}
+--------------------------------
+
+Row {data-width=150}
+-----------------------------------------------------------------------
+
+### Failed Launches in 2019
+
+```{r}
+
+fl = table(pilot$Nature)[[2]]
+valueBox(fl, icon = "fa-chevron-down",
+          color = ifelse(fl > 1, "warning", "primary"))
+```
+
+### Crashes in 2019
+
+```{r}
+
+Crash = table(pilot$Nature)[[1]]
+valueBox(Crash, icon = "fa-fire",
+         color = ifelse(Crash > 1, "warning", "primary"))
+```
+
+### Other pilot errors in 2019
+
+```{r}
+Other <- table(pilot$Nature)[[3]]
+valueBox(Other, 
+         icon = "fa-exclamation-triangle",
+         color = ifelse(Other > 1, "warning", "primary"))
+```
+
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+hist(temp)
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Pilot errors: Bar chart
+
+```{r}
+
+ a <- ggplot(pilot, aes(x = var))
+  print(a + geom_bar(aes(y=100*..count../sum(..count..)),fill = "#0073C2FF", color =       "#0073C2FF", alpha = 0.4) + scale_x_discrete(drop = FALSE) +
+  ggtitle("Bar chart of pilot errors") + theme(plot.title =            element_text(hjust = 0.5), axis.text.x = element_text(size  = 10, angle = 0, hjust =     0.6,vjust = 1)) +
+  xlab("Candidate Response") + ylab("Relative Frequency (%)"))
+
+
+```
+
+### Pilot errors: Pie Chart
+
+```{r}
+
+tab <- tabyl(var, show_na = FALSE)
+  tab <- adorn_totals(tab, where = "row", name = "Total")
+  tab <- adorn_pct_formatting(tab)
+  tab <- kable(tab,col.names = c("Candidate Response", "Count", "Frequency"),digits = 2)
+  print(tab)
+
+```
+
+```{r Drones, include=F}
+
+
+drone <- orf  %>%
+  filter(Responsibility == "Drone") %>%
+  dplyr::select('RPAS Reg Num', Category, Nature)
+
+occs <- unique(drone$Nature)
+drones<- unique(drone$`RPAS Reg Num`)
+
+ bar_summary <- matrix(nrow = length(occs), ncol = 2)
+ for (reg_num in drone){
+
+ }
+
+
+ var <- drone$Nature
+
+ for(i in 1:length(occs)){
+
+   var <- ifelse(var == i, occs[i], var)
+
+ }
+
+ var <- factor(var, occs)
+
+
+
+
+```
+
+# Drones
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+ a <- ggplot(drone, aes(x = var))
+  print(a + geom_bar(aes(y=100*..count../sum(..count..)),fill = "#0073C2FF", color =       "#0073C2FF", alpha = 0.4) + scale_x_discrete(drop = FALSE) +
+  ggtitle("Bar chart of pilot errors") + theme(plot.title =            element_text(hjust = 0.5), axis.text.x = element_text(size  = 10, angle = 0, hjust =     0.6,vjust = 1)) +
+  xlab("Candidate Response") + ylab("Relative Frequency (%)"))
+
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
+
+# Sites
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
